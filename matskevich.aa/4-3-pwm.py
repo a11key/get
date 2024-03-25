@@ -1,12 +1,11 @@
 # https://sourceforge.net/p/raspberry-gpio-python/wiki/PWM/
 import RPi.GPIO as GPIO
-import time
 GPIO.setmode(GPIO.BCM)
 
-GPIO.setup(21, GPIO.OUT)
-GPIO.setup(9, GPIO.OUT)
+GPIO.setup(24, GPIO.OUT) #R-C
+GPIO.setup(9, GPIO.OUT) #led
 
-p = GPIO.PWM(21, 1000)
+p = GPIO.PWM(24, 1000)
 
 
 
