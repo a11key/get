@@ -5,7 +5,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(24, GPIO.OUT) #R-C
 GPIO.setup(9, GPIO.OUT) #led
 
-p = GPIO.PWM(24, 1000)
+p = GPIO.PWM(9, 1000)
 
 
 
