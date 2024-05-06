@@ -21,7 +21,7 @@ def adc():
     for value in range(256):
 
         signal = decimal2binary(value)
-        time.sleep(0.001)
+        time.sleep(0.01)
         voltage = value / 256 * 3.3
         compValue = GPIO.input(comp)
         if compValue == 1:
@@ -29,6 +29,8 @@ def adc():
             break          
 
 try:
+    startTime = time.time()
+    print(startTime)
     while True:
         adc()
 
