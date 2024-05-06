@@ -14,13 +14,13 @@ GPIO.setup(troyka, GPIO.OUT)
 GPIO.setup(comp, GPIO.IN)
 GPIO.setup(leds, GPIO.OUT)
 
-
+#Перевод сигнала в двоичный код для светодиодов
 def decimal2binary(value):
     signal = [int(element) for element in bin(value)[2:].zfill(8)]
     GPIO.output(dac, signal)
     return signal
 
-
+#Перевод 
 def volume(value):
     n = int(value/256 * 8)
     out=[1]*n
@@ -28,6 +28,7 @@ def volume(value):
         out.append(0)
     return out
 
+#Считывание напряжения на конденсаторе с помощью комаратора
 def adc():
     n = 128
     value = 0
@@ -45,34 +46,41 @@ def adc():
  #   print("ADC value = {:^3} -> {}, input voltage = {:.2f}".format(value, signal, voltage))
     return [value, signal, voltage]
 
-
+#Список для хранения value
 data = []
 
 try:
+    # Считываем начальное время
     startTime = time.time()
 
+    #Считываем напряжение с конденсатора до максимального напряжения (2.66 В)
     voltage = 0
     GPIO.output(troyka, 1)
     while voltage < 2.66:
         ADC = adc()
         value = ADC[0]
         voltage = ADC[2]
-        # print(voltage)
+        print(voltage)
         data.append(value)
         # print(volume(value))
         GPIO.output(leds, volume(value))
     # print(data)
 
+    # Считываем конечное время
     endTime = time.time()
+    # Время эксперимента
     duration = endTime - startTime
     # print(duration)
 
+
+    #Строим график
     x = [i for i in range(len(data))]
     plt.scatter(x, data)
     plt.show()
 
     data_str = [str(i) for i in data]
 
+    #Записываем в файл напряжения
     with open("data.txt", "w") as data_write:
         data_write.write("\n".join(data_str))
 
@@ -80,20 +88,17 @@ try:
     T = duration/len(data)
     freq = 1/T
     step = 3.3/256
-
+    #Записываем в файл среднюю частоту дскретизации и шаг квантования
     with open("settings.txt", "w") as settings_write:
         settings_write.write(str(freq) + "\n" + str(step))
+
+
 
     print("Продолжительность эксперимента, с: ", duration)
     print("Период одного измерения, с: ", T)
     print("Средняя частота дискретизации, Гц: ", freq)
     print("шаг квантования АЦП, В: ", step)
     
-
-    
-
-
-
 finally:
     GPIO.output(dac, 0)
     GPIO.output(leds, 0)
